@@ -11,18 +11,16 @@ declare var fbAsyncInit: any;
 export class LoginComponent implements OnInit {
   constructor() {}
 
-  
-
   ngOnInit(): void {
-     (window as any).fbAsyncInit = function () {
-       FB.init({
-         appId: '870578177158205',
-         cookie: true,
-         xfbml: true,
-         version: 'v3.1',
-       });
-       FB.AppEvents.logPageView();
-     };
+    (<any>window).fbAsyncInit = function () {
+      FB.init({
+        appId: '870578177158205',
+        cookie: true,
+        xfbml: true,
+        version: 'v3.1',
+      });
+      FB.AppEvents.logPageView();
+    };
 
     (function (d, s, id) {
       var js: any,
@@ -38,8 +36,26 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
-    FB.login((res: any) => {
-      console.log(res);
+    FB.login(
+      (res: any) => {
+        this.me(res.authResponse.accessToken, res.authResponse.userID);
+      },
+      {
+        scope:
+          'public_profile,email,pages_messaging,pages_messaging_phone_number',
+        auth_type: 'rerequest',
+      }
+    );
+  }
+
+  me(accessToken: any, userID: any) {
+    console.log(accessToken, userID);
+    FB.api('/' + userID + '?fields=name,accounts,email,picture', (res: any) => {
+      if (res && !res.error) {
+        console.log(res);
+      } else {
+        console.log(res);
+      }
     });
   }
 }
